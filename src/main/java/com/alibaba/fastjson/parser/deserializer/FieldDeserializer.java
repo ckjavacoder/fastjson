@@ -15,12 +15,12 @@ public abstract class FieldDeserializer {
 
     public final FieldInfo fieldInfo;
 
-    public final Class<?>  clazz;
+    public final Class<?> clazz;
 
     protected Enum[] enums;
     protected long[] enumNameHashCodes;
 
-    public FieldDeserializer(Class<?> clazz, FieldInfo fieldInfo, int fastMatchToken){
+    public FieldDeserializer(Class<?> clazz, FieldInfo fieldInfo, int fastMatchToken) {
         this.clazz = clazz;
         this.fieldInfo = fieldInfo;
 
@@ -76,24 +76,24 @@ public abstract class FieldDeserializer {
 
     public abstract void parseField(DefaultJSONParser parser, Object object, Type objectType,
                                     Map<String, Object> fieldValues);
-    
+
     public void setValue(Object object, int value) throws IllegalAccessException {
         fieldInfo.field.setInt(object, value);
     }
-    
+
     public void setValue(Object object, long value) throws IllegalAccessException {
         fieldInfo.field.setLong(object, value);
     }
-    
+
     public void setValue(Object object, float value) throws IllegalAccessException {
         fieldInfo.field.setFloat(object, value);
     }
-    
+
     public void setValue(Object object, double value) throws IllegalAccessException {
         fieldInfo.field.setDouble(object, value);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void setValue(Object object, Object value) {
         if (value == null) {
             Class<?> fieldClass = fieldInfo.fieldClass;
@@ -101,7 +101,7 @@ public abstract class FieldDeserializer {
                 return;
             }
         }
-        
+
         final Field field = fieldInfo.field;
         final Method method = fieldInfo.method;
         try {
@@ -135,6 +135,11 @@ public abstract class FieldDeserializer {
                         }
                     }
                 } else {
+                    if (method == null) {
+                        field.setAccessible(true);
+                        field.set(object, value);
+                        field.setAccessible(false);
+                    }
                     method.invoke(object, value);
                 }
             }

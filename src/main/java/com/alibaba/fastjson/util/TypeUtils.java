@@ -42,9 +42,9 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
  * @author wenshao[szujobs@hotmail.com]
  */
 public class TypeUtils {
-	
+
     public static boolean compatibleWithJavaBean = false;
-    private static boolean setAccessibleEnable    = true;
+    private static boolean setAccessibleEnable = true;
 
     private static volatile Class kotlin_metadata;
     private static volatile boolean kotlin_metadata_error;
@@ -76,25 +76,34 @@ public class TypeUtils {
         return clazz.isAnnotationPresent(kotlin_metadata);
     }
 
+    public static boolean isKotlinDataClass(Class clazz) {
+        try {
+            Class<?> meta = Class.forName("kotlin.Metadata");
+            return clazz.getAnnotation(meta) != null;
+        } catch (ClassNotFoundException e) {
+        }
+        return false;
+    }
+
     private static boolean isKotlinIgnore(Class clazz, String methodName) {
         if (kotlinIgnores == null && !kotlinIgnores_error) {
             try {
                 Map<Class, String[]> map = new HashMap<Class, String[]>();
 
                 Class charRangeClass = Class.forName("kotlin.ranges.CharRange");
-                map.put(charRangeClass, new String[]{"getEndInclusive","isEmpty"});
+                map.put(charRangeClass, new String[]{"getEndInclusive", "isEmpty"});
 
                 Class intRangeClass = Class.forName("kotlin.ranges.IntRange");
-                map.put(intRangeClass, new String[]{"getEndInclusive","isEmpty"});
+                map.put(intRangeClass, new String[]{"getEndInclusive", "isEmpty"});
 
                 Class longRangeClass = Class.forName("kotlin.ranges.LongRange");
                 map.put(longRangeClass, new String[]{"getEndInclusive", "isEmpty"});
 
                 Class floatRangeClass = Class.forName("kotlin.ranges.ClosedFloatRange");
-                map.put(floatRangeClass, new String[]{"getEndInclusive","isEmpty"});
+                map.put(floatRangeClass, new String[]{"getEndInclusive", "isEmpty"});
 
                 Class doubleRangeClass = Class.forName("kotlin.ranges.ClosedDoubleRange");
-                map.put(doubleRangeClass, new String[]{"getEndInclusive","isEmpty"});
+                map.put(doubleRangeClass, new String[]{"getEndInclusive", "isEmpty"});
 
                 kotlinIgnores = map;
             } catch (Throwable error) {
@@ -143,7 +152,7 @@ public class TypeUtils {
             Object constructor = null;
             Object kclassImpl = kotlin_kclass_constructor.newInstance(clazz);
             Iterable it = (Iterable) kotlin_kclass_getConstructors.invoke(kclassImpl);
-            for (Iterator iterator = it.iterator();iterator.hasNext();iterator.hasNext()) {
+            for (Iterator iterator = it.iterator(); iterator.hasNext(); iterator.hasNext()) {
                 Object item = iterator.next();
                 List parameters = (List) kotlin_kfunction_getParameters.invoke(item);
                 if (constructor != null && parameters.size() == 0) {
@@ -165,7 +174,7 @@ public class TypeUtils {
 
         return null;
     }
-    
+
     public static final String castToString(Object value) {
         if (value == null) {
             return null;
@@ -189,7 +198,7 @@ public class TypeUtils {
                     || "null".equals(strVal)) {
                 return null;
             }
-            
+
             return Byte.parseByte(strVal);
         }
 
@@ -234,10 +243,10 @@ public class TypeUtils {
         if (value instanceof String) {
             String strVal = (String) value;
             if (strVal.length() == 0 //
-                || "null".equals(strVal)) {
+                    || "null".equals(strVal)) {
                 return null;
             }
-            
+
             return Short.parseShort(strVal);
         }
 
@@ -259,7 +268,7 @@ public class TypeUtils {
 
         String strVal = value.toString();
         if (strVal.length() == 0 //
-            || "null".equals(strVal)) {
+                || "null".equals(strVal)) {
             return null;
         }
 
@@ -281,7 +290,7 @@ public class TypeUtils {
 
         String strVal = value.toString();
         if (strVal.length() == 0 //
-            || "null".equals(strVal)) {
+                || "null".equals(strVal)) {
             return null;
         }
 
@@ -300,7 +309,7 @@ public class TypeUtils {
         if (value instanceof String) {
             String strVal = value.toString();
             if (strVal.length() == 0 //
-                || "null".equals(strVal)) {
+                    || "null".equals(strVal)) {
                 return null;
             }
 
@@ -322,10 +331,10 @@ public class TypeUtils {
         if (value instanceof String) {
             String strVal = value.toString();
             if (strVal.length() == 0 //
-                || "null".equals(strVal)) {
+                    || "null".equals(strVal)) {
                 return null;
             }
-            
+
             return Double.parseDouble(strVal);
         }
 
@@ -380,7 +389,7 @@ public class TypeUtils {
             }
 
             if (strVal.length() == 0 //
-                || "null".equals(strVal)) {
+                    || "null".equals(strVal)) {
                 return null;
             }
 
@@ -406,7 +415,7 @@ public class TypeUtils {
         if (value instanceof String) {
             String strVal = (String) value;
             if (strVal.length() == 0 //
-                || "null".equals(strVal)) {
+                    || "null".equals(strVal)) {
                 return null;
             }
 
@@ -447,7 +456,7 @@ public class TypeUtils {
         if (value instanceof String) {
             String strVal = (String) value;
             if (strVal.length() == 0 //
-                || "null".equals(strVal)) {
+                    || "null".equals(strVal)) {
                 return null;
             }
 
@@ -485,7 +494,7 @@ public class TypeUtils {
         if (value instanceof String) {
             String strVal = (String) value;
             if (strVal.length() == 0 //
-                || "null".equals(strVal)) {
+                    || "null".equals(strVal)) {
                 return null;
             }
 
@@ -494,7 +503,7 @@ public class TypeUtils {
                 return Boolean.TRUE;
             }
             if ("false".equalsIgnoreCase(strVal) //
-                || "0".equals(strVal)) {
+                    || "0".equals(strVal)) {
                 return Boolean.FALSE;
             }
         }
@@ -510,7 +519,7 @@ public class TypeUtils {
         return cast(obj, clazz, mapping, 0);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static final <T> T cast(Object obj, Class<T> clazz, ParserConfig mapping, int features) {
         if (obj == null) {
             return null;
@@ -551,7 +560,7 @@ public class TypeUtils {
 
                 return (T) array;
             }
-            
+
             if (clazz == byte[].class) {
                 return (T) castToBytes(obj);
             }
@@ -569,15 +578,15 @@ public class TypeUtils {
             return (T) castToByte(obj);
         }
 
-         if (clazz == char.class
-                 || clazz == Character.class) {
+        if (clazz == char.class
+                || clazz == Character.class) {
             if (obj instanceof String) {
                 String strVal = (String) obj;
                 if (strVal.length() == 1) {
                     return (T) Character.valueOf(strVal.charAt(0));
                 }
             }
-         }
+        }
 
         if (clazz == short.class || clazz == Short.class) {
             return (T) castToShort(obj);
@@ -638,10 +647,10 @@ public class TypeUtils {
         if (obj instanceof String) {
             String strVal = (String) obj;
             if (strVal.length() == 0 //
-                || "null".equals(strVal)) {
+                    || "null".equals(strVal)) {
                 return null;
             }
-            
+
             if (clazz == java.util.Currency.class) {
                 return (T) java.util.Currency.getInstance(strVal);
             }
@@ -650,7 +659,7 @@ public class TypeUtils {
         throw new JSONException("can not cast to : " + clazz.getName());
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static final <T> T castToEnum(Object obj, Class<T> clazz, ParserConfig mapping) {
         try {
             if (obj instanceof String) {
@@ -691,7 +700,7 @@ public class TypeUtils {
         if (obj instanceof String) {
             String strVal = (String) obj;
             if (strVal.length() == 0 //
-                || "null".equals(strVal)) {
+                    || "null".equals(strVal)) {
                 return null;
             }
         }
@@ -703,28 +712,28 @@ public class TypeUtils {
         throw new JSONException("can not cast to : " + type);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static final <T> T cast(Object obj, ParameterizedType type, ParserConfig mapping) {
         Type rawTye = type.getRawType();
 
-        if (rawTye == Set.class 
+        if (rawTye == Set.class
                 || rawTye == HashSet.class //
-                ||  rawTye == TreeSet.class //
+                || rawTye == TreeSet.class //
                 || rawTye == List.class //
                 || rawTye == ArrayList.class) {
             Type itemType = type.getActualTypeArguments()[0];
 
             if (obj instanceof Iterable) {
-                Collection collection; 
+                Collection collection;
                 if (rawTye == Set.class || rawTye == HashSet.class) {
                     collection = new HashSet();
                 } else if (rawTye == TreeSet.class) {
                     collection = new TreeSet();
                 } else {
-                    collection = new ArrayList();    
+                    collection = new ArrayList();
                 }
-                
-                for (Iterator it = ((Iterable) obj).iterator(); it.hasNext();) {
+
+                for (Iterator it = ((Iterable) obj).iterator(); it.hasNext(); ) {
                     Object item = it.next();
                     collection.add(cast(item, itemType, mapping));
                 }
@@ -754,7 +763,7 @@ public class TypeUtils {
         if (obj instanceof String) {
             String strVal = (String) obj;
             if (strVal.length() == 0 //
-                || "null".equals(strVal)) {
+                    || "null".equals(strVal)) {
                 return null;
             }
         }
@@ -773,7 +782,7 @@ public class TypeUtils {
         return castToJavaBean(map, clazz, config, 0);
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     public static final <T> T castToJavaBean(Map<String, Object> map, Class<T> clazz, ParserConfig config, int features) {
         try {
             if (clazz == StackTraceElement.class) {
@@ -834,7 +843,7 @@ public class TypeUtils {
                 }
 
                 return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                                                  new Class<?>[] { clazz }, object);
+                        new Class<?>[]{clazz}, object);
             }
 
             if (clazz == String.class && map instanceof JSONObject) {
@@ -850,11 +859,11 @@ public class TypeUtils {
             if (deserizer instanceof JavaBeanDeserializer) {
                 javaBeanDeser = (JavaBeanDeserializer) deserizer;
             }
-            
+
             if (javaBeanDeser == null) {
                 throw new JSONException("can not get javaBeanDeserializer");
             }
-            
+
             return (T) javaBeanDeser.createInstance(map, config);
         } catch (Exception e) {
             throw new JSONException(e.getMessage(), e);
@@ -901,7 +910,7 @@ public class TypeUtils {
         mappings.put("java.lang.RuntimeException", RuntimeException.class);
     }
 
-    public static Class<?> getClassFromMapping(String className){
+    public static Class<?> getClassFromMapping(String className) {
         return mappings.get(className);
     }
 
@@ -917,7 +926,7 @@ public class TypeUtils {
         if (className.length() >= 256) {
             throw new JSONException("className too long. " + className);
         }
-        
+
         Class<?> clazz = mappings.get(className);
 
         if (clazz != null) {
@@ -933,7 +942,7 @@ public class TypeUtils {
             String newClassName = className.substring(1, className.length() - 1);
             return loadClass(newClassName, classLoader);
         }
-        
+
         try {
             if (classLoader != null) {
                 clazz = classLoader.loadClass(className);
@@ -1014,7 +1023,7 @@ public class TypeUtils {
                             || method.getParameterTypes().length != 0 //
                             || method.getReturnType() == ClassLoader.class //
                             || method.getDeclaringClass() == Object.class //
-                            ) {
+                    ) {
                         continue;
                     }
 
@@ -1056,7 +1065,7 @@ public class TypeUtils {
 
                             if (paramNames != null) {
                                 String[] paramNames_sorted = new String[paramNames.length];
-                                System.arraycopy(paramNames, 0,paramNames_sorted, 0, paramNames.length);
+                                System.arraycopy(paramNames, 0, paramNames_sorted, 0, paramNames.length);
                                 Arrays.sort(paramNames_sorted);
 
                                 paramNameMapping = new short[paramNames.length];
@@ -1117,15 +1126,15 @@ public class TypeUtils {
 
                         TypeUtils.setAccessible(clazz, method, modifiers);
                         fieldInfoMap.put(propertyName, new FieldInfo(propertyName, method, null, clazz, null, ordinal,
-                                                                     serialzeFeatures, annotation, null, true));
+                                serialzeFeatures, annotation, null, true));
                         continue;
                     }
                 }
 
                 if (methodName.startsWith("get")) {
                     if (methodName.length() < 4 //
-                        || methodName.equals("getClass") //
-                            ) {
+                            || methodName.equals("getClass") //
+                    ) {
                         continue;
                     }
 
@@ -1178,7 +1187,7 @@ public class TypeUtils {
                             }
                         }
                     }
-                    
+
                     if (propertyNamingStrategy != null && !fieldAnnotationExists) {
                         propertyName = propertyNamingStrategy.translate(propertyName);
                     }
@@ -1192,8 +1201,8 @@ public class TypeUtils {
 
                     TypeUtils.setAccessible(clazz, method, modifiers);
                     fieldInfoMap.put(propertyName,
-                                     new FieldInfo(propertyName, method, field, clazz, null, ordinal, serialzeFeatures,
-                                                   annotation, fieldAnnotation, fieldGenericSupport));
+                            new FieldInfo(propertyName, method, field, clazz, null, ordinal, serialzeFeatures,
+                                    annotation, fieldAnnotation, fieldGenericSupport));
                 }
 
                 if (methodName.startsWith("is")) {
@@ -1252,7 +1261,7 @@ public class TypeUtils {
                             }
                         }
                     }
-                    
+
                     if (propertyNamingStrategy != null) {
                         propertyName = propertyNamingStrategy.translate(propertyName);
                     }
@@ -1267,12 +1276,12 @@ public class TypeUtils {
                     TypeUtils.setAccessible(clazz, field, modifiers);
                     TypeUtils.setAccessible(clazz, method, modifiers);
                     fieldInfoMap.put(propertyName,
-                                     new FieldInfo(propertyName, method, field, clazz, null, ordinal, serialzeFeatures,
-                                                   annotation, fieldAnnotation, fieldGenericSupport));
+                            new FieldInfo(propertyName, method, field, clazz, null, ordinal, serialzeFeatures,
+                                    annotation, fieldAnnotation, fieldGenericSupport));
                 }
             }
         }
-        
+
         List<Field> classfields;
         {
             classfields = new ArrayList<Field>(declaredFields.length);
@@ -1284,25 +1293,25 @@ public class TypeUtils {
                 if (f.getName().equals("this$0")) {
                     continue;
                 }
-                
+
                 if ((f.getModifiers() & Modifier.PUBLIC) != 0) {
                     classfields.add(f);
                 }
             }
-            
+
             for (Class<?> c = clazz.getSuperclass(); c != null && c != Object.class; c = c.getSuperclass()) {
                 for (Field f : c.getDeclaredFields()) {
                     if ((f.getModifiers() & Modifier.STATIC) != 0) {
                         continue;
                     }
-                    
+
                     if ((f.getModifiers() & Modifier.PUBLIC) != 0) {
                         classfields.add(f);
                     }
                 }
             }
         }
-        
+
         for (Field field : classfields) {
             JSONField fieldAnnotation = jsonFieldSupport ? field.getAnnotation(JSONField.class) : null;
 
@@ -1315,7 +1324,7 @@ public class TypeUtils {
 
                 ordinal = fieldAnnotation.ordinal();
                 serialzeFeatures = SerializerFeature.of(fieldAnnotation.serialzeFeatures());
-                
+
                 if (fieldAnnotation.name().length() != 0) {
                     propertyName = fieldAnnotation.name();
                 }
@@ -1327,7 +1336,7 @@ public class TypeUtils {
                     continue;
                 }
             }
-            
+
             if (propertyNamingStrategy != null) {
                 propertyName = propertyNamingStrategy.translate(propertyName);
             }
@@ -1335,16 +1344,16 @@ public class TypeUtils {
             if (!fieldInfoMap.containsKey(propertyName)) {
                 TypeUtils.setAccessible(clazz, field, modifiers);
                 fieldInfoMap.put(propertyName, //
-                                 new FieldInfo(propertyName, //
-                                               null, //
-                                               field, //
-                                               clazz, //
-                                               null, //
-                                               ordinal, //
-                                               serialzeFeatures, //
-                                               null, //
-                                               fieldAnnotation, //
-                                               fieldGenericSupport));
+                        new FieldInfo(propertyName, //
+                                null, //
+                                field, //
+                                clazz, //
+                                null, //
+                                ordinal, //
+                                serialzeFeatures, //
+                                null, //
+                                fieldAnnotation, //
+                                fieldGenericSupport));
             }
         }
 
@@ -1468,32 +1477,32 @@ public class TypeUtils {
 
         Class<?> superClass = clazz.getSuperclass();
         return superClass != Object.class //
-               && superClass != null //
-               && isJSONTypeIgnore(superClass, //
-                                   superClass.getAnnotation(JSONType.class), //
-                                   propertyName);
+                && superClass != null //
+                && isJSONTypeIgnore(superClass, //
+                superClass.getAnnotation(JSONType.class), //
+                propertyName);
     }
-    
+
     public static boolean isGenericParamType(Type type) {
         if (type instanceof ParameterizedType) {
             return true;
         }
-        
+
         if (type instanceof Class) {
             Type superType = ((Class<?>) type).getGenericSuperclass();
             return superType != Object.class //
                     && isGenericParamType(superType);
         }
-        
+
         return false;
     }
-    
+
     public static Type getGenericParamType(Type type) {
         return type instanceof Class //
-            ? getGenericParamType(((Class<?>) type).getGenericSuperclass()) //
-            : type;
+                ? getGenericParamType(((Class<?>) type).getGenericSuperclass()) //
+                : type;
     }
-    
+
     public static Class<?> getClass(Type type) {
         if (type.getClass() == Class.class) {
             return (Class<?>) type;
@@ -1502,12 +1511,12 @@ public class TypeUtils {
         if (type instanceof ParameterizedType) {
             return getClass(((ParameterizedType) type).getRawType());
         }
-        
+
         if (type instanceof TypeVariable) {
             return (Class<?>) ((TypeVariable<?>) type).getBounds()[0];
         }
 
-        if(type instanceof WildcardType){
+        if (type instanceof WildcardType) {
             Type[] upperBounds = ((WildcardType) type).getUpperBounds();
             if (upperBounds.length == 1) {
                 return getClass(upperBounds[0]);
@@ -1516,39 +1525,39 @@ public class TypeUtils {
 
         return Object.class;
     }
-    
+
     public static String decapitalize(String name) {
         if (name == null //
-            || name.length() == 0 //
-            || (name.length() > 1 && Character.isUpperCase(name.charAt(1)) //
+                || name.length() == 0 //
+                || (name.length() > 1 && Character.isUpperCase(name.charAt(1)) //
                 && Character.isUpperCase(name.charAt(0))) //
         ) {
             return name;
         }
-        
+
         char chars[] = name.toCharArray();
         chars[0] = Character.toLowerCase(chars[0]);
         return new String(chars);
     }
-    
+
     public static boolean setAccessible(Class<?> clazz, Member member, int classMofifiers) {
         if (member == null //
-            || !setAccessibleEnable //
+                || !setAccessibleEnable //
         ) {
             return false;
         }
-        
+
         Class<?> supperClass = clazz.getSuperclass();
-        
+
         if ((supperClass == null || supperClass == Object.class) //
-            && (member.getModifiers() & Modifier.PUBLIC) != 0 //
-            && (classMofifiers & Modifier.PUBLIC) != 0 //
+                && (member.getModifiers() & Modifier.PUBLIC) != 0 //
+                && (classMofifiers & Modifier.PUBLIC) != 0 //
         ) {
             return false;
         }
-        
+
         AccessibleObject obj = (AccessibleObject) member;
-        
+
         try {
             obj.setAccessible(true);
             return true;
@@ -1561,22 +1570,22 @@ public class TypeUtils {
     public static Field getField(Class<?> clazz, String fieldName, Field[] declaredFields) {
         return getField(clazz, fieldName, declaredFields, null);
     }
-    
+
     public static Field getField(Class<?> clazz, String fieldName, Field[] declaredFields, Map<Class<?>, Field[]> classFieldCache) {
         Field field = getField0(clazz, fieldName, declaredFields, classFieldCache);
         if (field == null) {
             field = getField0(clazz, "_" + fieldName, declaredFields, classFieldCache);
         }
-        
+
         if (field == null) {
             field = getField0(clazz, "m_" + fieldName, declaredFields, classFieldCache);
         }
-        
+
         if (field == null) {
             String mName = "m" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
             field = getField0(clazz, mName, declaredFields, classFieldCache);
         }
-        
+
         return field;
     }
 
@@ -1595,11 +1604,11 @@ public class TypeUtils {
                 return item;
             }
         }
-        
+
         Class<?> superClass = clazz.getSuperclass();
 
         if (superClass == null || superClass == Object.class) {
-            return  null;
+            return null;
         }
 
         Field[] superClassFields = classFieldCache != null ? classFieldCache.get(superClass) : null;
@@ -1645,19 +1654,19 @@ public class TypeUtils {
         if (fieldType == byte.class) {
             return (byte) 0;
         } else if (fieldType == short.class) {
-            return  (short) 0;
+            return (short) 0;
         } else if (fieldType == int.class) {
-            return  0;
+            return 0;
         } else if (fieldType == long.class) {
-            return  0L;
+            return 0L;
         } else if (fieldType == float.class) {
-            return  0F;
+            return 0F;
         } else if (fieldType == double.class) {
-            return  0D;
+            return 0D;
         } else if (fieldType == boolean.class) {
             return Boolean.FALSE;
         } else if (fieldType == char.class) {
-            return  '0';
+            return '0';
         }
         return null;
     }

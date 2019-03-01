@@ -19,20 +19,20 @@ import com.alibaba.fastjson.util.TypeUtils;
 
 class JavaBeanInfo {
     final Constructor<?> defaultConstructor;
-    final int            defaultConstructorParameterSize;
+    final int defaultConstructorParameterSize;
     final Constructor<?> creatorConstructor;
-    final Method         factoryMethod;
+    final Method factoryMethod;
 
-    final FieldInfo[]    fields;
-    final FieldInfo[]    sortedFields;
-    final JSONType       jsonType;
-    boolean              ordered = false;
-    final boolean        supportBeanToArray;
-    
-    public final String  typeName;
-    public final String  typeKey;
+    final FieldInfo[] fields;
+    final FieldInfo[] sortedFields;
+    final JSONType jsonType;
+    boolean ordered = false;
+    final boolean supportBeanToArray;
 
-    public final int     parserFeatures;
+    public final String typeName;
+    public final String typeKey;
+
+    public final int parserFeatures;
     public final String[] creatorConstructorParameters;
 
     JavaBeanInfo(Class<?> clazz, //
@@ -43,7 +43,7 @@ class JavaBeanInfo {
                  FieldInfo[] sortedFields, //
                  JSONType jsonType,
                  String[] creatorConstructorParameters
-                 ){
+    ) {
 
         this.defaultConstructor = defaultConstructor;
         this.creatorConstructor = creatorConstructor;
@@ -74,10 +74,10 @@ class JavaBeanInfo {
             this.typeKey = null;
         }
         this.parserFeatures = parserFeatures;
-        
+
         boolean supportBeanToArray = false;
         if (jsonType != null) {
-            for (Feature feature: jsonType.parseFeatures()) {
+            for (Feature feature : jsonType.parseFeatures()) {
                 if (feature == Feature.SupportArrayToBean) {
                     supportBeanToArray = true;
                 }
@@ -91,15 +91,15 @@ class JavaBeanInfo {
         defaultConstructorParameterSize = defaultConstructor != null
                 ? defaultConstructor.getParameterTypes().length
                 : factoryMethod != null
-                    ? factoryMethod.getParameterTypes().length
-                    : 0;
+                ? factoryMethod.getParameterTypes().length
+                : 0;
     }
 
     private FieldInfo[] computeSortedFields(FieldInfo[] fields, FieldInfo[] sortedFields) {
         if (jsonType == null) {
             return sortedFields;
         }
-        
+
         String[] orders = jsonType.orders();
         if (orders != null && orders.length != 0) {
             boolean containsAll = true;
@@ -116,7 +116,7 @@ class JavaBeanInfo {
                     break;
                 }
             }
-            
+
             if (!containsAll) {
                 return sortedFields;
             }
@@ -129,11 +129,11 @@ class JavaBeanInfo {
                         break;
                     }
                 }
-                
+
                 if (orderMatch) {
                     return sortedFields;
                 }
-                
+
                 FieldInfo[] newSortedFields = new FieldInfo[sortedFields.length];
                 for (int i = 0; i < orders.length; ++i) {
                     for (int j = 0; j < sortedFields.length; ++j) {
@@ -147,7 +147,7 @@ class JavaBeanInfo {
                 ordered = true;
                 return newSortedFields;
             }
-            
+
             FieldInfo[] newSortedFields = new FieldInfo[sortedFields.length];
             for (int i = 0; i < orders.length; ++i) {
                 for (int j = 0; j < sortedFields.length; ++j) {
@@ -157,7 +157,7 @@ class JavaBeanInfo {
                     }
                 }
             }
-            
+
             int fieldIndex = orders.length;
             for (int i = 0; i < sortedFields.length; ++i) {
                 boolean contains = false;
@@ -186,7 +186,7 @@ class JavaBeanInfo {
                     if (item.getOnly && !field.getOnly) {
                         continue;
                     }
-    
+
                     return false;
                 }
             }
@@ -233,7 +233,7 @@ class JavaBeanInfo {
                 }
             }
         }
-        
+
         Constructor<?> creatorConstructor = null;
         String[] creatorConstructorParameters = null;
         Method factoryMethod = null;
@@ -271,7 +271,7 @@ class JavaBeanInfo {
             methods = new Method[methodList.size()];
             methodList.toArray(methods);
         }
-        
+
         final Field[] declaredFields = clazz.getDeclaredFields();
 
         boolean isInterfaceOrAbstract = clazz.isInterface() || (classModifiers & Modifier.ABSTRACT) != 0;
@@ -289,14 +289,14 @@ class JavaBeanInfo {
                     break;
                 }
             }
-            
+
             if (creatorConstructor != null) {
                 TypeUtils.setAccessible(clazz, creatorConstructor, classModifiers);
 
                 Class<?>[] parameterTypes = creatorConstructor.getParameterTypes();
                 Type[] getGenericParameterTypes = fieldGenericSupport //
-                    ? creatorConstructor.getGenericParameterTypes() //
-                    : parameterTypes;
+                        ? creatorConstructor.getGenericParameterTypes() //
+                        : parameterTypes;
 
                 Annotation[][] paramAnnotationArrays = creatorConstructor.getParameterAnnotations();
                 for (int i = 0; i < parameterTypes.length; ++i) {
@@ -323,12 +323,12 @@ class JavaBeanInfo {
                     final int ordinal = fieldAnnotation.ordinal();
                     final int serialzeFeatures = SerializerFeature.of(fieldAnnotation.serialzeFeatures());
                     FieldInfo fieldInfo = new FieldInfo(fieldAnnotation.name(), //
-                                                        clazz, //
-                                                        fieldClass, //
-                                                        fieldType, //
-                                                        field, //
-                                                        ordinal, //
-                                                        serialzeFeatures);
+                            clazz, //
+                            fieldClass, //
+                            fieldType, //
+                            field, //
+                            ordinal, //
+                            serialzeFeatures);
                     addField(fieldList, fieldInfo, fieldOnly);
                 }
 
@@ -403,7 +403,7 @@ class JavaBeanInfo {
                             , sortedFields, jsonType, creatorConstructorParameters);
                     return beanInfo;
                 }
-            } else if (!isInterfaceOrAbstract){
+            } else if (!isInterfaceOrAbstract) {
                 if (kotlin && constructors.length > 0) {
                     String[] parameters = TypeUtils.getKoltinConstructorParameters(clazz);
 
@@ -458,7 +458,7 @@ class JavaBeanInfo {
                                 serialzeFeatures = SerializerFeature.of(fieldAnnotation.serialzeFeatures());
 
                                 String nameAnnotated = fieldAnnotation.name();
-                                if(nameAnnotated.length() != 0) {
+                                if (nameAnnotated.length() != 0) {
                                     paramName = nameAnnotated;
                                 }
                             } else {
@@ -492,8 +492,6 @@ class JavaBeanInfo {
 //                            }
 //                            return new JavaBeanInfo(clazz, null, creatorConstructor, null, fields
 //                                    , sortedFields, jsonType, creatorConstructorParameters);
-                    } else {
-                        throw new JSONException("default constructor not found. " + clazz);
                     }
                 } else {
                     throw new JSONException("default constructor not found. " + clazz);
@@ -516,7 +514,7 @@ class JavaBeanInfo {
                 Class<?> returnType = method.getReturnType();
                 if ((!(returnType == Void.TYPE || returnType == method.getDeclaringClass())) //
                         || method.getParameterTypes().length != 1 //
-                        ) {
+                ) {
                     continue;
                 }
 
@@ -538,17 +536,17 @@ class JavaBeanInfo {
                     if (annotation.name().length() != 0) {
                         String propertyName = annotation.name();
                         addField(fieldList,
-                                 new FieldInfo(propertyName, //
-                                               method, //
-                                               null, //
-                                               clazz, //
-                                               type, //
-                                               ordinal, //
-                                               serialzeFeatures, //
-                                               annotation, //
-                                               null, //
-                                               fieldGenericSupport), //
-                                 fieldOnly);
+                                new FieldInfo(propertyName, //
+                                        method, //
+                                        null, //
+                                        clazz, //
+                                        type, //
+                                        ordinal, //
+                                        serialzeFeatures, //
+                                        annotation, //
+                                        null, //
+                                        fieldGenericSupport), //
+                                fieldOnly);
                         TypeUtils.setAccessible(clazz, method, classModifiers);
                         continue;
                     }
@@ -580,7 +578,7 @@ class JavaBeanInfo {
                 Field field = TypeUtils.getField(clazz, propertyName, declaredFields, classFieldCache);
                 if (field == null && method.getParameterTypes()[0] == boolean.class) {
                     String isFieldName = "is" + Character.toUpperCase(propertyName.charAt(0))
-                                         + propertyName.substring(1);
+                            + propertyName.substring(1);
                     field = TypeUtils.getField(clazz, isFieldName, declaredFields, classFieldCache);
                 }
 
@@ -594,31 +592,31 @@ class JavaBeanInfo {
                         if (fieldAnnotation.name().length() != 0) {
                             propertyName = fieldAnnotation.name();
                             addField(fieldList, //
-                                     new FieldInfo(propertyName, method, field, clazz, type, //
-                                                   ordinal, serialzeFeatures, annotation, fieldAnnotation,
-                                                   fieldGenericSupport), //
-                                     fieldOnly);
+                                    new FieldInfo(propertyName, method, field, clazz, type, //
+                                            ordinal, serialzeFeatures, annotation, fieldAnnotation,
+                                            fieldGenericSupport), //
+                                    fieldOnly);
                             continue;
                         }
-                        
+
                         if (annotation == null) {
                             annotation = fieldAnnotation;
                         }
                     }
                 }
-                
+
                 if (propertyNamingStrategy != null) {
                     propertyName = propertyNamingStrategy.translate(propertyName);
                 }
-                
+
                 addField(fieldList, //
-                         new FieldInfo(propertyName, method, null, clazz, type, ordinal, serialzeFeatures, annotation,
-                                       null, fieldGenericSupport), //
-                         fieldOnly);
+                        new FieldInfo(propertyName, method, null, clazz, type, ordinal, serialzeFeatures, annotation,
+                                null, fieldGenericSupport), //
+                        fieldOnly);
                 TypeUtils.setAccessible(clazz, method, classModifiers);
             }
         }
-        
+
         List<Field> classfields;
         {
             classfields = new ArrayList<Field>(declaredFields.length);
@@ -627,35 +625,43 @@ class JavaBeanInfo {
                 if ((modifiers & Modifier.STATIC) != 0) {
                     continue;
                 }
-                
-                if((modifiers & Modifier.FINAL) != 0) {
+
+                if ((modifiers & Modifier.FINAL) != 0) {
+                    if (TypeUtils.isKotlinDataClass(clazz)) {
+                        classfields.add(f);
+                        continue;
+                    }
                     Class<?> fieldType = f.getType();
                     boolean supportReadOnly = Map.class.isAssignableFrom(fieldType) || Collection.class.isAssignableFrom(fieldType);
                     if (!supportReadOnly) {
                         continue;
                     }
                 }
-                
+
                 if ((f.getModifiers() & Modifier.PUBLIC) != 0) {
                     classfields.add(f);
                 }
             }
-            
+
             for (Class<?> c = clazz.getSuperclass(); c != null && c != Object.class; c = c.getSuperclass()) {
                 for (Field f : c.getDeclaredFields()) {
                     int modifiers = f.getModifiers();
                     if ((modifiers & Modifier.STATIC) != 0) {
                         continue;
                     }
-                    
-                    if((modifiers & Modifier.FINAL) != 0) {
+
+                    if ((modifiers & Modifier.FINAL) != 0) {
                         Class<?> fieldType = f.getType();
+                        if (TypeUtils.isKotlinDataClass(clazz)) {
+                            classfields.add(f);
+                            continue;
+                        }
                         boolean supportReadOnly = Map.class.isAssignableFrom(fieldType) || Collection.class.isAssignableFrom(fieldType);
                         if (!supportReadOnly) {
                             continue;
                         }
                     }
-                    
+
                     if ((modifiers & Modifier.PUBLIC) != 0) {
                         classfields.add(f);
                     }
@@ -691,24 +697,24 @@ class JavaBeanInfo {
                     propertyName = fieldAnnotation.name();
                 }
             }
-            
+
             if (propertyNamingStrategy != null) {
                 propertyName = propertyNamingStrategy.translate(propertyName);
             }
-            
+
             TypeUtils.setAccessible(clazz, field, classModifiers);
             addField(fieldList, //
-                     new FieldInfo(propertyName, //
-                                   null, //
-                                   field, //
-                                   clazz, //
-                                   type, //
-                                   ordinal, //
-                                   serialzeFeatures, //
-                                   null, //
-                                   fieldAnnotation, // 
-                                   fieldGenericSupport), // 
-                     fieldOnly);
+                    new FieldInfo(propertyName, //
+                            null, //
+                            field, //
+                            clazz, //
+                            type, //
+                            ordinal, //
+                            serialzeFeatures, //
+                            null, //
+                            fieldAnnotation, //
+                            fieldGenericSupport), //
+                    fieldOnly);
         }
 
         if (!fieldOnly) {
@@ -722,25 +728,25 @@ class JavaBeanInfo {
                     if (method.getParameterTypes().length != 0) {
                         continue;
                     }
-    
+
                     Class<?> methodReturnType = method.getReturnType();
                     if (Collection.class.isAssignableFrom(methodReturnType) //
-                        || Map.class.isAssignableFrom(methodReturnType) //
+                            || Map.class.isAssignableFrom(methodReturnType) //
                     ) {
                         String propertyName;
-    
+
                         JSONField annotation = jsonFieldSupport ? method.getAnnotation(JSONField.class) : null;
                         String annotationName;
-                        
+
                         propertyName = annotation != null //
-                                       && (annotationName = annotation.name()).length() > 0 //
-                                           ? annotationName //
-                                           : Character.toLowerCase(methodName.charAt(3)) + methodName.substring(4);
-    
+                                && (annotationName = annotation.name()).length() > 0 //
+                                ? annotationName //
+                                : Character.toLowerCase(methodName.charAt(3)) + methodName.substring(4);
+
                         addField(fieldList, //
-                                 new FieldInfo(propertyName, method, null, clazz, type, 0, 0, annotation, null,
-                                               fieldGenericSupport), //
-                                 fieldOnly);
+                                new FieldInfo(propertyName, method, null, clazz, type, 0, 0, annotation, null,
+                                        fieldGenericSupport), //
+                                fieldOnly);
                         TypeUtils.setAccessible(clazz, method, classModifiers);
                     }
                 }
