@@ -627,7 +627,7 @@ class JavaBeanInfo {
                 }
 
                 if ((modifiers & Modifier.FINAL) != 0) {
-                    if (TypeUtils.isKotlinDataClass(clazz)) {
+                    if (kotlin && creatorConstructor==null && defaultConstructor==null) {
                         classfields.add(f);
                         continue;
                     }
@@ -652,7 +652,7 @@ class JavaBeanInfo {
 
                     if ((modifiers & Modifier.FINAL) != 0) {
                         Class<?> fieldType = f.getType();
-                        if (TypeUtils.isKotlinDataClass(clazz)) {
+                        if (kotlin && creatorConstructor==null && defaultConstructor==null) {
                             classfields.add(f);
                             continue;
                         }

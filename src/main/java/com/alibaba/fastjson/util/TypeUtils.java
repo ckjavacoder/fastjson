@@ -76,15 +76,6 @@ public class TypeUtils {
         return clazz.isAnnotationPresent(kotlin_metadata);
     }
 
-    public static boolean isKotlinDataClass(Class clazz) {
-        try {
-            Class<?> meta = Class.forName("kotlin.Metadata");
-            return clazz.getAnnotation(meta) != null;
-        } catch (ClassNotFoundException e) {
-        }
-        return false;
-    }
-
     private static boolean isKotlinIgnore(Class clazz, String methodName) {
         if (kotlinIgnores == null && !kotlinIgnores_error) {
             try {
